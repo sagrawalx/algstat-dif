@@ -222,7 +222,7 @@ plot <- function(s,
 
 plot(1948, "llm")
 plot(1947, "lrm", method_pairs[[2]])
-plot(1947, "lrm", method_pairs[[3]])
+plot(1947, "lrm", method_pairs[[3]], filename = "tests/x.svg")
 plot(1948, "llm", method_pairs[[4]])
 
 ################################################################################
@@ -255,29 +255,22 @@ grid <- expand_grid(seed = seeds,
 # Reorganize for output
 ################################################################################
 
-# Column width for seed column as percentage of total page width
-seed_col_width <- 4
+# Only for testing
+grid <- readRDS("tests/grid.rds")
 
-cell_maker <- function(filename) {
+# Restructure the grid
+grid <- grid |> 
+    mutate(name = str_c(family, map_chr(method_pair, method_pair_suffix))) |> 
+    select(seed, name, filename)
+
+# Turns filename into HTML image tag
+cell_maker <- function(filename, img_width) {
     if (filename == "") {
         return("")
     }
     x <- str_replace(filename, "../", "")
-    str_c("<img src=\"./", x, "\" />")
+    str_c("<img width=\"", img_width ,"\" src=\"./", x, "\" />")
 }
-
-grid <- grid |> 
-    mutate(cell = map_chr(filename, cell_maker)) |> 
-    mutate(name = str_c(family, map_chr(method_pair, method_pair_suffix))) |> 
-    select(seed, name, cell)
-
-primary <- grid |> 
-    filter(name %in% c("llm", "lrm")) |> 
-    pivot_wider(names_from = name, values_from = cell)
-
-secondary <- grid |> 
-    filter(!(name %in% c("llm", "lrm"))) |> 
-    pivot_wider(names_from = name, values_from = cell)
 
 ################################################################################
 # Primary Comparison Plots
@@ -286,25 +279,26 @@ secondary <- grid |>
 titles <- c("Seed",
             "Log-Linear Models",
             "Logistic Regressions")
-n <- length(titles)
-primary <- primary |> 
+
+primary <- grid |> 
+    filter(name %in% c("llm", "lrm")) |> 
+    mutate(filename = map_chr(filename, \(x) cell_maker(x, 300))) |> 
+    pivot_wider(names_from = name, values_from = filename) |> 
     rename_with(\(.) titles)
 
 primary_output <- primary |> 
-    xtable(align = rep("l", n+1)) |> 
+    xtable(align = rep("l", ncol(primary)+1)) |> 
     print(type = "html",
           include.rownames = FALSE,
           sanitize.text.function = identity,
-          html.table.attributes = "style=\"width: 100%;\"",
+          html.table.attributes = "",
           comment = FALSE,
           print.results = FALSE) |> 
     str_replace_all("\n  ", "\n") |> 
     str_replace_all("\n ", "\n") |> 
-    str_replace("<th> Seed", str_c("<th style=\"width: ", 
-                                   seed_col_width, "%;\"> Seed")) |> 
-    str_replace_all("<th>", str_c("<th style=\"width: ", 
-                                  (100 - seed_col_width)/(n-1), 
-                                  "%;\">"))
+    str_replace("<table >", "<table>") |> 
+    str_replace_all("<th>", "<th align=\"center\">") |> 
+    str_replace_all("<td>", "<td align=\"center\">")
 
 # Check
 cat(primary_output)
@@ -314,41 +308,41 @@ cat(primary_output)
 ################################################################################
 
 titles <- c("Seed",
-            "LLM Asymptotic Swapped",
-            "LLM Exact Swapped",
-            "LLM Asymptotic Comparison",
-            "LRM Asymptotic Swapped",
-            "LRM Exact Swapped",
-            "LRM Asymptotic Comparison")
-n <- length(titles)
-secondary <- secondary |> 
+            "LLM Asy Swap",
+            "LLM Exc Swap",
+            "LLM Asy Comp",
+            "LRM Asy Swap",
+            "LRM Exc Swap",
+            "LRM Asy Comp")
+
+secondary <- grid |> 
+    filter(!(name %in% c("llm", "lrm"))) |> 
+    mutate(filename = map_chr(filename, \(x) cell_maker(x, 95))) |> 
+    pivot_wider(names_from = name, values_from = filename) |> 
     rename_with(\(.) titles)
 
 header <- str_c("<tr> ",
-                "<th rowspan=2 style=\"width: ", 
-                seed_col_width, 
-                "%;\"> Seed </th> ",
+                "<th rowspan=2> Seed </th> ",
                 "<th colspan=3> Log-Linear Models </th> ",
                 "<th colspan=3> Logistic Regressions </th> ",
                 "</tr>\n")
 
 secondary_output <- secondary |> 
-    xtable(align = rep("l", n+1)) |> 
+    xtable(align = rep("l", ncol(secondary)+1)) |> 
     print(type = "html",
           include.rownames = FALSE,
           sanitize.text.function = identity,
-          html.table.attributes = "style=\"width: 100%\"",
+          html.table.attributes = "",
           comment = FALSE,
           print.results = FALSE) |> 
     str_replace_all("\n  ", "\n") |> 
     str_replace_all("\n ", "\n") |> 
-    str_replace("\">\n", str_c("\">\n", header)) |>
+    str_replace("<table >\n", str_c("<table>\n", header)) |>
+    str_replace("<th> Seed </th>", "") |> 
     str_replace_all("LLM ", "") |> 
     str_replace_all("LRM ", "") |> 
-    str_replace("<th> Seed </th>", "") |> 
-    str_replace_all("<th>", str_c("<th style=\"width: ", 
-                                  (100 - seed_col_width)/(n-1), 
-                                  "%;\">"))
+    str_replace_all("<th>", "<th align=\"center\">") |> 
+    str_replace_all("<td>", "<td align=\"center\">")
 
 # Check
 cat(secondary_output)
@@ -379,3 +373,4 @@ out <- read_file(readme_source) |>
     str_replace(secondary_placeholder, secondary_output)
 out <- str_c(note, out)
 write_file(out, readme_output)
+

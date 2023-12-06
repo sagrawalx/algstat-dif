@@ -91,52 +91,52 @@ The following plots compare the asymptotic and exact strategies of DIF analysis.
 
 Right-click and open image in new tab to zoom. 
 
-<table style="width: 100%;">
-<tr> <th style="width: 4%;"> Seed </th> <th style="width: 48%;"> Log-Linear Models </th> <th style="width: 48%;"> Logistic Regressions </th>  </tr>
-<tr> <td> 1789 </td> <td> <img src="./figs/1789-llm.svg" /> </td> <td> <img src="./figs/1789-lrm.svg" /> </td> </tr>
-<tr> <td> 1795 </td> <td> <img src="./figs/1795-llm.svg" /> </td> <td>  </td> </tr>
-<tr> <td> 1848 </td> <td> <img src="./figs/1848-llm.svg" /> </td> <td> <img src="./figs/1848-lrm.svg" /> </td> </tr>
-<tr> <td> 1919 </td> <td> <img src="./figs/1919-llm.svg" /> </td> <td>  </td> </tr>
-<tr> <td> 1930 </td> <td> <img src="./figs/1930-llm.svg" /> </td> <td> <img src="./figs/1930-lrm.svg" /> </td> </tr>
-<tr> <td> 1945 </td> <td> <img src="./figs/1945-llm.svg" /> </td> <td> <img src="./figs/1945-lrm.svg" /> </td> </tr>
-<tr> <td> 1947 </td> <td> <img src="./figs/1947-llm.svg" /> </td> <td> <img src="./figs/1947-lrm.svg" /> </td> </tr>
-<tr> <td> 1948 </td> <td> <img src="./figs/1948-llm.svg" /> </td> <td>  </td> </tr>
-<tr> <td> 1955 </td> <td> <img src="./figs/1955-llm.svg" /> </td> <td>  </td> </tr>
-<tr> <td> 1963 </td> <td> <img src="./figs/1963-llm.svg" /> </td> <td> <img src="./figs/1963-lrm.svg" /> </td> </tr>
-<tr> <td> 1968 </td> <td> <img src="./figs/1968-llm.svg" /> </td> <td> <img src="./figs/1968-lrm.svg" /> </td> </tr>
-<tr> <td> 1972 </td> <td> <img src="./figs/1972-llm.svg" /> </td> <td> <img src="./figs/1972-lrm.svg" /> </td> </tr>
-<tr> <td> 1997 </td> <td> <img src="./figs/1997-llm.svg" /> </td> <td>  </td> </tr>
-<tr> <td> 2011 </td> <td> <img src="./figs/2011-llm.svg" /> </td> <td>  </td> </tr>
-<tr> <td> 2013 </td> <td> <img src="./figs/2013-llm.svg" /> </td> <td>  </td> </tr>
-<tr> <td> 2015 </td> <td> <img src="./figs/2015-llm.svg" /> </td> <td>  </td> </tr>
+<table>
+<tr> <th align="center"> Seed </th> <th align="center"> Log-Linear Models </th> <th align="center"> Logistic Regressions </th>  </tr>
+<tr> <td align="center"> 1789 </td> <td align="center"> <img width="300" src="./figs/1789-llm.svg" /> </td> <td align="center"> <img width="300" src="./figs/1789-lrm.svg" /> </td> </tr>
+<tr> <td align="center"> 1795 </td> <td align="center"> <img width="300" src="./figs/1795-llm.svg" /> </td> <td align="center">  </td> </tr>
+<tr> <td align="center"> 1848 </td> <td align="center"> <img width="300" src="./figs/1848-llm.svg" /> </td> <td align="center"> <img width="300" src="./figs/1848-lrm.svg" /> </td> </tr>
+<tr> <td align="center"> 1919 </td> <td align="center"> <img width="300" src="./figs/1919-llm.svg" /> </td> <td align="center">  </td> </tr>
+<tr> <td align="center"> 1930 </td> <td align="center"> <img width="300" src="./figs/1930-llm.svg" /> </td> <td align="center"> <img width="300" src="./figs/1930-lrm.svg" /> </td> </tr>
+<tr> <td align="center"> 1945 </td> <td align="center"> <img width="300" src="./figs/1945-llm.svg" /> </td> <td align="center"> <img width="300" src="./figs/1945-lrm.svg" /> </td> </tr>
+<tr> <td align="center"> 1947 </td> <td align="center"> <img width="300" src="./figs/1947-llm.svg" /> </td> <td align="center"> <img width="300" src="./figs/1947-lrm.svg" /> </td> </tr>
+<tr> <td align="center"> 1948 </td> <td align="center"> <img width="300" src="./figs/1948-llm.svg" /> </td> <td align="center">  </td> </tr>
+<tr> <td align="center"> 1955 </td> <td align="center"> <img width="300" src="./figs/1955-llm.svg" /> </td> <td align="center">  </td> </tr>
+<tr> <td align="center"> 1963 </td> <td align="center"> <img width="300" src="./figs/1963-llm.svg" /> </td> <td align="center"> <img width="300" src="./figs/1963-lrm.svg" /> </td> </tr>
+<tr> <td align="center"> 1968 </td> <td align="center"> <img width="300" src="./figs/1968-llm.svg" /> </td> <td align="center"> <img width="300" src="./figs/1968-lrm.svg" /> </td> </tr>
+<tr> <td align="center"> 1972 </td> <td align="center"> <img width="300" src="./figs/1972-llm.svg" /> </td> <td align="center"> <img width="300" src="./figs/1972-lrm.svg" /> </td> </tr>
+<tr> <td align="center"> 1997 </td> <td align="center"> <img width="300" src="./figs/1997-llm.svg" /> </td> <td align="center">  </td> </tr>
+<tr> <td align="center"> 2011 </td> <td align="center"> <img width="300" src="./figs/2011-llm.svg" /> </td> <td align="center">  </td> </tr>
+<tr> <td align="center"> 2013 </td> <td align="center"> <img width="300" src="./figs/2013-llm.svg" /> </td> <td align="center">  </td> </tr>
+<tr> <td align="center"> 2015 </td> <td align="center"> <img width="300" src="./figs/2015-llm.svg" /> </td> <td align="center">  </td> </tr>
 </table>
 
 
 ### Secondary Comparison Plots
 
-The following plots compare the DIF analysis paradigm that we focus on in the paper against two of the variants discussed there: the variant where the order of goodness-of-fit tests is swapped (using both the asymptotic and the exact strategies), and the variant where classification step is augmented with a comparison (only using the asymptotic strategy). 
+The following plots compare the DIF analysis paradigm that we focus on in the paper against two of the variants discussed there: the variant where the order of goodness-of-fit tests is swapped using both the asymptotic ("Asy") and the exact ("Exc") strategies, and the variant where classification step is augmented with a comparison ("Comp"), using only the asymptotic strategy.
 
 Right-click and open image in new tab to zoom. 
 
-<table style="width: 100%">
-<tr> <th rowspan=2 style="width: 4%;"> Seed </th> <th colspan=3> Log-Linear Models </th> <th colspan=3> Logistic Regressions </th> </tr>
-<tr>  <th style="width: 16%;"> Asymptotic Swapped </th> <th style="width: 16%;"> Exact Swapped </th> <th style="width: 16%;"> Asymptotic Comparison </th> <th style="width: 16%;"> Asymptotic Swapped </th> <th style="width: 16%;"> Exact Swapped </th> <th style="width: 16%;"> Asymptotic Comparison </th>  </tr>
-<tr> <td> 1789 </td> <td> <img src="./figs/1789-llm-swap-asy.svg" /> </td> <td> <img src="./figs/1789-llm-swap-exc.svg" /> </td> <td> <img src="./figs/1789-llm-comp-asy.svg" /> </td> <td> <img src="./figs/1789-lrm-swap-asy.svg" /> </td> <td> <img src="./figs/1789-lrm-swap-exc.svg" /> </td> <td> <img src="./figs/1789-lrm-comp-asy.svg" /> </td> </tr>
-<tr> <td> 1795 </td> <td> <img src="./figs/1795-llm-swap-asy.svg" /> </td> <td> <img src="./figs/1795-llm-swap-exc.svg" /> </td> <td> <img src="./figs/1795-llm-comp-asy.svg" /> </td> <td>  </td> <td>  </td> <td>  </td> </tr>
-<tr> <td> 1848 </td> <td> <img src="./figs/1848-llm-swap-asy.svg" /> </td> <td> <img src="./figs/1848-llm-swap-exc.svg" /> </td> <td> <img src="./figs/1848-llm-comp-asy.svg" /> </td> <td> <img src="./figs/1848-lrm-swap-asy.svg" /> </td> <td> <img src="./figs/1848-lrm-swap-exc.svg" /> </td> <td> <img src="./figs/1848-lrm-comp-asy.svg" /> </td> </tr>
-<tr> <td> 1919 </td> <td> <img src="./figs/1919-llm-swap-asy.svg" /> </td> <td> <img src="./figs/1919-llm-swap-exc.svg" /> </td> <td> <img src="./figs/1919-llm-comp-asy.svg" /> </td> <td>  </td> <td>  </td> <td>  </td> </tr>
-<tr> <td> 1930 </td> <td> <img src="./figs/1930-llm-swap-asy.svg" /> </td> <td> <img src="./figs/1930-llm-swap-exc.svg" /> </td> <td> <img src="./figs/1930-llm-comp-asy.svg" /> </td> <td> <img src="./figs/1930-lrm-swap-asy.svg" /> </td> <td> <img src="./figs/1930-lrm-swap-exc.svg" /> </td> <td> <img src="./figs/1930-lrm-comp-asy.svg" /> </td> </tr>
-<tr> <td> 1945 </td> <td> <img src="./figs/1945-llm-swap-asy.svg" /> </td> <td> <img src="./figs/1945-llm-swap-exc.svg" /> </td> <td> <img src="./figs/1945-llm-comp-asy.svg" /> </td> <td> <img src="./figs/1945-lrm-swap-asy.svg" /> </td> <td> <img src="./figs/1945-lrm-swap-exc.svg" /> </td> <td> <img src="./figs/1945-lrm-comp-asy.svg" /> </td> </tr>
-<tr> <td> 1947 </td> <td> <img src="./figs/1947-llm-swap-asy.svg" /> </td> <td> <img src="./figs/1947-llm-swap-exc.svg" /> </td> <td> <img src="./figs/1947-llm-comp-asy.svg" /> </td> <td> <img src="./figs/1947-lrm-swap-asy.svg" /> </td> <td> <img src="./figs/1947-lrm-swap-exc.svg" /> </td> <td> <img src="./figs/1947-lrm-comp-asy.svg" /> </td> </tr>
-<tr> <td> 1948 </td> <td> <img src="./figs/1948-llm-swap-asy.svg" /> </td> <td> <img src="./figs/1948-llm-swap-exc.svg" /> </td> <td> <img src="./figs/1948-llm-comp-asy.svg" /> </td> <td>  </td> <td>  </td> <td>  </td> </tr>
-<tr> <td> 1955 </td> <td> <img src="./figs/1955-llm-swap-asy.svg" /> </td> <td> <img src="./figs/1955-llm-swap-exc.svg" /> </td> <td> <img src="./figs/1955-llm-comp-asy.svg" /> </td> <td>  </td> <td>  </td> <td>  </td> </tr>
-<tr> <td> 1963 </td> <td> <img src="./figs/1963-llm-swap-asy.svg" /> </td> <td> <img src="./figs/1963-llm-swap-exc.svg" /> </td> <td> <img src="./figs/1963-llm-comp-asy.svg" /> </td> <td> <img src="./figs/1963-lrm-swap-asy.svg" /> </td> <td> <img src="./figs/1963-lrm-swap-exc.svg" /> </td> <td> <img src="./figs/1963-lrm-comp-asy.svg" /> </td> </tr>
-<tr> <td> 1968 </td> <td> <img src="./figs/1968-llm-swap-asy.svg" /> </td> <td> <img src="./figs/1968-llm-swap-exc.svg" /> </td> <td> <img src="./figs/1968-llm-comp-asy.svg" /> </td> <td> <img src="./figs/1968-lrm-swap-asy.svg" /> </td> <td> <img src="./figs/1968-lrm-swap-exc.svg" /> </td> <td> <img src="./figs/1968-lrm-comp-asy.svg" /> </td> </tr>
-<tr> <td> 1972 </td> <td> <img src="./figs/1972-llm-swap-asy.svg" /> </td> <td> <img src="./figs/1972-llm-swap-exc.svg" /> </td> <td> <img src="./figs/1972-llm-comp-asy.svg" /> </td> <td> <img src="./figs/1972-lrm-swap-asy.svg" /> </td> <td> <img src="./figs/1972-lrm-swap-exc.svg" /> </td> <td> <img src="./figs/1972-lrm-comp-asy.svg" /> </td> </tr>
-<tr> <td> 1997 </td> <td> <img src="./figs/1997-llm-swap-asy.svg" /> </td> <td> <img src="./figs/1997-llm-swap-exc.svg" /> </td> <td> <img src="./figs/1997-llm-comp-asy.svg" /> </td> <td>  </td> <td>  </td> <td>  </td> </tr>
-<tr> <td> 2011 </td> <td> <img src="./figs/2011-llm-swap-asy.svg" /> </td> <td> <img src="./figs/2011-llm-swap-exc.svg" /> </td> <td> <img src="./figs/2011-llm-comp-asy.svg" /> </td> <td>  </td> <td>  </td> <td>  </td> </tr>
-<tr> <td> 2013 </td> <td> <img src="./figs/2013-llm-swap-asy.svg" /> </td> <td> <img src="./figs/2013-llm-swap-exc.svg" /> </td> <td> <img src="./figs/2013-llm-comp-asy.svg" /> </td> <td>  </td> <td>  </td> <td>  </td> </tr>
-<tr> <td> 2015 </td> <td> <img src="./figs/2015-llm-swap-asy.svg" /> </td> <td> <img src="./figs/2015-llm-swap-exc.svg" /> </td> <td> <img src="./figs/2015-llm-comp-asy.svg" /> </td> <td>  </td> <td>  </td> <td>  </td> </tr>
+<table>
+<tr> <th rowspan=2> Seed </th> <th colspan=3> Log-Linear Models </th> <th colspan=3> Logistic Regressions </th> </tr>
+<tr>  <th align="center"> Asy Swap </th> <th align="center"> Exc Swap </th> <th align="center"> Asy Comp </th> <th align="center"> Asy Swap </th> <th align="center"> Exc Swap </th> <th align="center"> Asy Comp </th>  </tr>
+<tr> <td align="center"> 1789 </td> <td align="center"> <img width="95" src="./figs/1789-llm-swap-asy.svg" /> </td> <td align="center"> <img width="95" src="./figs/1789-llm-swap-exc.svg" /> </td> <td align="center"> <img width="95" src="./figs/1789-llm-comp-asy.svg" /> </td> <td align="center"> <img width="95" src="./figs/1789-lrm-swap-asy.svg" /> </td> <td align="center"> <img width="95" src="./figs/1789-lrm-swap-exc.svg" /> </td> <td align="center"> <img width="95" src="./figs/1789-lrm-comp-asy.svg" /> </td> </tr>
+<tr> <td align="center"> 1795 </td> <td align="center"> <img width="95" src="./figs/1795-llm-swap-asy.svg" /> </td> <td align="center"> <img width="95" src="./figs/1795-llm-swap-exc.svg" /> </td> <td align="center"> <img width="95" src="./figs/1795-llm-comp-asy.svg" /> </td> <td align="center">  </td> <td align="center">  </td> <td align="center">  </td> </tr>
+<tr> <td align="center"> 1848 </td> <td align="center"> <img width="95" src="./figs/1848-llm-swap-asy.svg" /> </td> <td align="center"> <img width="95" src="./figs/1848-llm-swap-exc.svg" /> </td> <td align="center"> <img width="95" src="./figs/1848-llm-comp-asy.svg" /> </td> <td align="center"> <img width="95" src="./figs/1848-lrm-swap-asy.svg" /> </td> <td align="center"> <img width="95" src="./figs/1848-lrm-swap-exc.svg" /> </td> <td align="center"> <img width="95" src="./figs/1848-lrm-comp-asy.svg" /> </td> </tr>
+<tr> <td align="center"> 1919 </td> <td align="center"> <img width="95" src="./figs/1919-llm-swap-asy.svg" /> </td> <td align="center"> <img width="95" src="./figs/1919-llm-swap-exc.svg" /> </td> <td align="center"> <img width="95" src="./figs/1919-llm-comp-asy.svg" /> </td> <td align="center">  </td> <td align="center">  </td> <td align="center">  </td> </tr>
+<tr> <td align="center"> 1930 </td> <td align="center"> <img width="95" src="./figs/1930-llm-swap-asy.svg" /> </td> <td align="center"> <img width="95" src="./figs/1930-llm-swap-exc.svg" /> </td> <td align="center"> <img width="95" src="./figs/1930-llm-comp-asy.svg" /> </td> <td align="center"> <img width="95" src="./figs/1930-lrm-swap-asy.svg" /> </td> <td align="center"> <img width="95" src="./figs/1930-lrm-swap-exc.svg" /> </td> <td align="center"> <img width="95" src="./figs/1930-lrm-comp-asy.svg" /> </td> </tr>
+<tr> <td align="center"> 1945 </td> <td align="center"> <img width="95" src="./figs/1945-llm-swap-asy.svg" /> </td> <td align="center"> <img width="95" src="./figs/1945-llm-swap-exc.svg" /> </td> <td align="center"> <img width="95" src="./figs/1945-llm-comp-asy.svg" /> </td> <td align="center"> <img width="95" src="./figs/1945-lrm-swap-asy.svg" /> </td> <td align="center"> <img width="95" src="./figs/1945-lrm-swap-exc.svg" /> </td> <td align="center"> <img width="95" src="./figs/1945-lrm-comp-asy.svg" /> </td> </tr>
+<tr> <td align="center"> 1947 </td> <td align="center"> <img width="95" src="./figs/1947-llm-swap-asy.svg" /> </td> <td align="center"> <img width="95" src="./figs/1947-llm-swap-exc.svg" /> </td> <td align="center"> <img width="95" src="./figs/1947-llm-comp-asy.svg" /> </td> <td align="center"> <img width="95" src="./figs/1947-lrm-swap-asy.svg" /> </td> <td align="center"> <img width="95" src="./figs/1947-lrm-swap-exc.svg" /> </td> <td align="center"> <img width="95" src="./figs/1947-lrm-comp-asy.svg" /> </td> </tr>
+<tr> <td align="center"> 1948 </td> <td align="center"> <img width="95" src="./figs/1948-llm-swap-asy.svg" /> </td> <td align="center"> <img width="95" src="./figs/1948-llm-swap-exc.svg" /> </td> <td align="center"> <img width="95" src="./figs/1948-llm-comp-asy.svg" /> </td> <td align="center">  </td> <td align="center">  </td> <td align="center">  </td> </tr>
+<tr> <td align="center"> 1955 </td> <td align="center"> <img width="95" src="./figs/1955-llm-swap-asy.svg" /> </td> <td align="center"> <img width="95" src="./figs/1955-llm-swap-exc.svg" /> </td> <td align="center"> <img width="95" src="./figs/1955-llm-comp-asy.svg" /> </td> <td align="center">  </td> <td align="center">  </td> <td align="center">  </td> </tr>
+<tr> <td align="center"> 1963 </td> <td align="center"> <img width="95" src="./figs/1963-llm-swap-asy.svg" /> </td> <td align="center"> <img width="95" src="./figs/1963-llm-swap-exc.svg" /> </td> <td align="center"> <img width="95" src="./figs/1963-llm-comp-asy.svg" /> </td> <td align="center"> <img width="95" src="./figs/1963-lrm-swap-asy.svg" /> </td> <td align="center"> <img width="95" src="./figs/1963-lrm-swap-exc.svg" /> </td> <td align="center"> <img width="95" src="./figs/1963-lrm-comp-asy.svg" /> </td> </tr>
+<tr> <td align="center"> 1968 </td> <td align="center"> <img width="95" src="./figs/1968-llm-swap-asy.svg" /> </td> <td align="center"> <img width="95" src="./figs/1968-llm-swap-exc.svg" /> </td> <td align="center"> <img width="95" src="./figs/1968-llm-comp-asy.svg" /> </td> <td align="center"> <img width="95" src="./figs/1968-lrm-swap-asy.svg" /> </td> <td align="center"> <img width="95" src="./figs/1968-lrm-swap-exc.svg" /> </td> <td align="center"> <img width="95" src="./figs/1968-lrm-comp-asy.svg" /> </td> </tr>
+<tr> <td align="center"> 1972 </td> <td align="center"> <img width="95" src="./figs/1972-llm-swap-asy.svg" /> </td> <td align="center"> <img width="95" src="./figs/1972-llm-swap-exc.svg" /> </td> <td align="center"> <img width="95" src="./figs/1972-llm-comp-asy.svg" /> </td> <td align="center"> <img width="95" src="./figs/1972-lrm-swap-asy.svg" /> </td> <td align="center"> <img width="95" src="./figs/1972-lrm-swap-exc.svg" /> </td> <td align="center"> <img width="95" src="./figs/1972-lrm-comp-asy.svg" /> </td> </tr>
+<tr> <td align="center"> 1997 </td> <td align="center"> <img width="95" src="./figs/1997-llm-swap-asy.svg" /> </td> <td align="center"> <img width="95" src="./figs/1997-llm-swap-exc.svg" /> </td> <td align="center"> <img width="95" src="./figs/1997-llm-comp-asy.svg" /> </td> <td align="center">  </td> <td align="center">  </td> <td align="center">  </td> </tr>
+<tr> <td align="center"> 2011 </td> <td align="center"> <img width="95" src="./figs/2011-llm-swap-asy.svg" /> </td> <td align="center"> <img width="95" src="./figs/2011-llm-swap-exc.svg" /> </td> <td align="center"> <img width="95" src="./figs/2011-llm-comp-asy.svg" /> </td> <td align="center">  </td> <td align="center">  </td> <td align="center">  </td> </tr>
+<tr> <td align="center"> 2013 </td> <td align="center"> <img width="95" src="./figs/2013-llm-swap-asy.svg" /> </td> <td align="center"> <img width="95" src="./figs/2013-llm-swap-exc.svg" /> </td> <td align="center"> <img width="95" src="./figs/2013-llm-comp-asy.svg" /> </td> <td align="center">  </td> <td align="center">  </td> <td align="center">  </td> </tr>
+<tr> <td align="center"> 2015 </td> <td align="center"> <img width="95" src="./figs/2015-llm-swap-asy.svg" /> </td> <td align="center"> <img width="95" src="./figs/2015-llm-swap-exc.svg" /> </td> <td align="center"> <img width="95" src="./figs/2015-llm-comp-asy.svg" /> </td> <td align="center">  </td> <td align="center">  </td> <td align="center">  </td> </tr>
 </table>
 
 
