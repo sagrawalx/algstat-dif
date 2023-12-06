@@ -256,7 +256,7 @@ grid <- expand_grid(seed = seeds,
 ################################################################################
 
 # Only for testing
-grid <- readRDS("tests/grid.rds")
+# grid <- readRDS("tests/grid.rds")
 
 # Restructure the grid
 grid <- grid |> 
@@ -373,4 +373,3 @@ out <- read_file(readme_source) |>
     str_replace(secondary_placeholder, secondary_output)
 out <- str_c(note, out)
 write_file(out, readme_output)
-
