@@ -15,8 +15,7 @@ grouper <- "major"
 
 # Discretizes a numerical vector x into discrete levels 0, 1, ..., k-1 
 discretize <- function(x, k) {
-    y <- cut_interval(x, n = k)
-    as.integer(y) - 1
+    as.integer(cut_interval(x, n = k)) - 1
 }
 
 # ==============================================================================
@@ -141,8 +140,10 @@ lambda <- function(x, k) {
         table()
     
     # Check full model fits, asymptotic
-    fit <- glm(p ~ ability + group + ability:group, binomial, weights = n, 
-               data = u)
+    fit <- glm(p ~ ability + group + ability:group, 
+               weights = n, 
+               data = reorganize(t),
+               family = binomial)
     lrm_asy_full_p <- pchisq(fit$deviance, fit$df.residual, lower.tail = FALSE) 
     
     # Check full model fits, exact
@@ -175,8 +176,18 @@ df <- expand_grid(k = c(6L, 9L), item = 1:20) |>
                   .names = "{.col}_adj")) |> 
     ungroup()
 
-# Helper function for TeX output in the paper: encloses the first string x
-# in a TeX \emph{...} if the first and second strings differ.
+# Helper function for TeX output: Removes k labels after the first item
+ability_label_remover <- function(k, item) {
+    if (item == 1) { 
+        out <- as.character(k) 
+    } else { 
+        out <- "" 
+    }
+    out
+}
+
+# Helper function for TeX output: Encloses the first string x in \emph{...} if 
+# the first and second strings differ
 empher <- function(x, y) {
     if (x == y) {
         out <- x
@@ -186,27 +197,30 @@ empher <- function(x, y) {
     out
 }
 
-# Helper function for TeX output: add daggers to results where DIF is detected
-# but it would not be detected after the BH adjustment to p-values
-daggerer <- function(x, p_adj, alpha = 0.05) {
-    if (!is.na(p_adj) && !str_detect(x, "none") && p_adj >= alpha) {
-        out <- str_c(x, "\\textsuperscript{\\textdagger}")
-    } else {
-        out <- x
+# Helper function for TeX output: Adds decorations to indicate various
+# subtleties that should be considered with the DIF analysis
+decorator <- function(x, no23_p, full_p = 1, alpha = 0.05) {
+    # Make a list of decorations to add
+    decorations <- character()
+    if (full_p < alpha) {
+        # If full_p is small, it means that the full model does not fit well,
+        # so DIF analysis results should be taken with a grain of salt, so
+        # we mark it with an asterisk
+        decorations <- c(decorations, "*")
+    } else if (!is.na(no23_p) && !str_detect(x, "none") && no23_p >= alpha) {
+        # If DIF was detected, and the input p-value for the no23 model
+        # (intended to be a BH-adjusted p-value!) is large, it means that
+        # the detected DIF should probably be ignored, and we mark it with
+        # a dagger
+        decorations <- c(decorations, "\\textdagger")
     }
-    out
-}
-
-# Helper function for TeX output: add asterisks to results where the analysis
-# concludes nonuniform DIF, but the adjusted p-values for the full model
-# suggest that the full model does not fit
-asterisker <- function(x, p, alpha = 0.05) {
-    if (p < alpha) {
-        out <- str_c(x, "\\textsuperscript{*}")
-    } else {
-        out <- x
+    
+    # Add decorations and return
+    decorations <- str_flatten_comma(decorations)
+    if (decorations != "") {
+        decorations <- str_c("\\textsuperscript{", decorations, "}")
     }
-    out
+    str_c(x, decorations)
 }
 
 # Tibble for TeX output
@@ -218,18 +232,19 @@ df_tex <- df |>
                                   "nonunif" ~ "nonuniform", 
                                   "fail" ~ "failure",
                                   "unclass" ~ "unclassifiable"))) |> 
-    mutate(k = map2_chr(k, item, 
-                        \(k, i) if (i == 1) { as.character(k) } else { "" })) |> 
+    mutate(k = map2_chr(k, item, ability_label_remover)) |> 
     mutate(llm_asy = map2_chr(llm_asy_main, llm_exc_main, empher)) |> 
     mutate(llm_exc = map2_chr(llm_exc_main, llm_asy_main, empher)) |> 
     mutate(lrm_asy = map2_chr(lrm_asy_main, lrm_exc_main, empher)) |> 
     mutate(lrm_exc = map2_chr(lrm_exc_main, lrm_asy_main, empher)) |> 
-    mutate(llm_asy = map2_chr(llm_asy, llm_asy_no23_p_adj, daggerer)) |> 
-    mutate(llm_exc = map2_chr(llm_exc, llm_exc_no23_p_adj, daggerer)) |> 
-    mutate(lrm_asy = map2_chr(lrm_asy, lrm_asy_no23_p_adj, daggerer)) |> 
-    mutate(lrm_exc = map2_chr(lrm_exc, lrm_exc_no23_p_adj, daggerer)) |> 
-    mutate(lrm_asy = map2_chr(lrm_asy, lrm_asy_full_p_adj, asterisker)) |> 
-    mutate(lrm_exc = map2_chr(lrm_exc, lrm_exc_full_p_adj, asterisker)) |> 
+    mutate(llm_asy = pmap_chr(list(llm_asy, llm_asy_no23_p_adj), decorator)) |> 
+    mutate(llm_exc = pmap_chr(list(llm_exc, llm_exc_no23_p_adj), decorator)) |> 
+    mutate(lrm_asy = pmap_chr(list(lrm_asy, 
+                                   lrm_asy_no23_p_adj, 
+                                   lrm_asy_full_p_adj), decorator)) |> 
+    mutate(lrm_exc = pmap_chr(list(lrm_exc, 
+                                   llm_exc_no23_p_adj, 
+                                   lrm_exc_full_p_adj), decorator)) |> 
     select(k, item, llm_asy, llm_exc, lrm_asy, lrm_exc)
 
 # TeX header for table
