@@ -3,9 +3,9 @@ source("base.R")
 library(xtable)
 library(ShinyItemAnalysis)
 
-################################################################################
+# ==============================================================================
 # Initialize
-################################################################################
+# ==============================================================================
 
 # Load data
 data(HCI)
@@ -19,9 +19,9 @@ discretize <- function(x, k) {
     as.integer(y) - 1
 }
 
-################################################################################
-# Focus item
-################################################################################
+# ==============================================================================
+# Focus Item
+# ==============================================================================
 
 # Choose focus item: Item 1, Item 2, ..., Item 20
 focus_item <- 17
@@ -34,24 +34,24 @@ t <- tibble(ability = discretize(HCI$total, 6),
 t
 
 # Asymptotic log-linear
-no23 <- list(c(1,2), c(1,3))                    # Facet specification of model
-x <- loglin(t, no23, fit = TRUE)                # Fit the model
-sum(x$fit >= 5) / length(x$fit)                 # Percent large expected counts
-pchisq(x$lrt, x$df, lower.tail = FALSE)         # p-value
+no23 <- list(c(1,2), c(1,3))                                    # Facet specification of model
+x <- loglin(t, no23, fit = TRUE)                                # Fit the model
+sum(x$fit >= 5) / length(x$fit)                                 # Percent large expected counts
+pchisq(x$lrt, x$df, lower.tail = FALSE)                         # p-value
 
-no3w <- list(c(1,2), c(1,3), c(2,3))            # Facet specification of model
-x <- loglin(t, no3w, fit = TRUE)                # Fit the model
-sum(x$fit >= 5) / length(x$fit)                 # Percent large expected counts
-pchisq(x$lrt, x$df, lower.tail = FALSE)         # p-value
+no3w <- list(c(1,2), c(1,3), c(2,3))                            # Facet specification of model
+x <- loglin(t, no3w, fit = TRUE)                                # Fit the model
+sum(x$fit >= 5) / length(x$fit)                                 # Percent large expected counts
+pchisq(x$lrt, x$df, lower.tail = FALSE)                         # p-value
 
 # Exact log-linear
-x <- loglinear(no23, t)                         # Sample the fiber
-x$p.value[["PR"]]                               # p-value
-count_tables(t, hmat(dim(t), no23))             # Count tables in fiber
+x <- loglinear(no23, t)                                         # Sample the fiber
+x$p.value[["PR"]]                                               # p-value
+count_tables(t, hmat(dim(t), no23))                             # Count tables in fiber
 
-x <- loglinear(no3w, t)                         # Sample the fiber
-x$p.value[["PR"]]                               # p-value
-count_tables(t, hmat(dim(t), no3w))             # Count tables in fiber
+x <- loglinear(no3w, t)                                         # Sample the fiber
+x$p.value[["PR"]]                                               # p-value
+count_tables(t, hmat(dim(t), no3w))                             # Count tables in fiber
 
 # Asymptotic logistic regression
 u <- as_tibble(t) |>
@@ -61,17 +61,28 @@ u <- as_tibble(t) |>
               n = sum(n), 
               .groups = "drop")                                 # Transform
 
-x <- glm(p ~ ability, binomial, weights = n, data = u)          # Fit model
+x <- glm(p ~ ability, 
+         binomial, weights = n, data = u)                       # Fit model
 sum(mle(t, no23, "lrm")$expected >= 5)/length(t)                # Percent large expected counts
 pchisq(x$deviance, x$df.residual, lower.tail = FALSE)           # p-value
 
-x <- glm(p ~ ability + group, binomial, weights = n, data = u)  # Fit model
+x <- glm(p ~ ability + group, 
+         binomial, weights = n, data = u)                       # Fit model
+sum(mle(t, no3w, "lrm")$expected >= 5)/length(t)                # Percent large expected counts
+pchisq(x$deviance, x$df.residual, lower.tail = FALSE)           # p-value
+
+x <- glm(p ~ ability + group + ability:group, 
+         binomial, weights = n, data = u)                       # Fit model
 sum(mle(t, no3w, "lrm")$expected >= 5)/length(t)                # Percent large expected counts
 pchisq(x$deviance, x$df.residual, lower.tail = FALSE)           # p-value
 
 # Exact logistic regression
 d <- map(dimnames(t), as.numeric)                               # Dimension names
-A <- t(expand_grid(1, d$ability, d$group))                      # Auxiliary matrix
+A <- expand_grid(intercept = 1, 
+                 ability = d$ability, 
+                 group = d$group) |> 
+    mutate(interaction = ability * group) |> 
+    t()                                                         # Auxiliary matrix
 v <- as_tibble(t) |>
     arrange(desc(response), ability, group) |>
     pull(n)                                                     # Table as a vector
@@ -86,6 +97,15 @@ sample <- metropolis(v, moves,
 mean(computeUProbsCpp(sample) <= pr)                            # p-value
 count_tables(v, config_no23)                                    # Count tables in fiber
 
+config_no3w <- lawrence(A[1:3,])                                # Configuration matrix
+moves <- markov(config_no3w, p = "arb")                         # Markov basis for fiber
+sample <- metropolis(v, moves,
+                     iter = 10000,
+                     burn = 1000,
+                     thin = 10)$steps                           # Sample fiber
+mean(computeUProbsCpp(sample) <= pr)                            # p-value
+count_tables(v, config_no3w)                                    # Count tables in fiber
+
 config_no3w <- lawrence(A)                                      # Configuration matrix
 moves <- markov(config_no3w, p = "arb")                         # Markov basis for fiber
 sample <- metropolis(v, moves,
@@ -95,9 +115,9 @@ sample <- metropolis(v, moves,
 mean(computeUProbsCpp(sample) <= pr)                            # p-value
 count_tables(v, config_no3w)                                    # Count tables in fiber
 
-################################################################################
+# ==============================================================================
 # All Items
-################################################################################
+# ==============================================================================
 
 # Helper function: for item x and with k ability levels, construct the relevant
 # three-way contingency table and perform table_task on the resulting table.
@@ -120,15 +140,40 @@ lambda <- function(x, k) {
                 response = HCI[[paste("Item", x)]]) |> 
         table()
     
+    # Check full model fits, asymptotic
+    fit <- glm(p ~ ability + group + ability:group, binomial, weights = n, 
+               data = u)
+    lrm_asy_full_p <- pchisq(fit$deviance, fit$df.residual, lower.tail = FALSE) 
+    
+    # Check full model fits, exact
+    v <- as_tibble(t) |>
+        arrange(desc(response), ability, group) |>
+        pull(n)
+    pr <- computeUProbsCpp(matrix(v))
+    sample <- metropolis(v, moves$lrm_full,
+                         iter = 10000,
+                         burn = 1000,
+                         thin = 10)$steps
+    lrm_exc_full_p <- mean(computeUProbsCpp(sample) <= pr)
+    
+    
     # Perform table tasks
-    table_task(t, moves)
+    bind_cols(table_task(t, moves), 
+              lrm_asy_full_p = lrm_asy_full_p, 
+              lrm_exc_full_p = lrm_exc_full_p)
 }
 
-# Run the helper function on all items with 6 and 9 ability levels
+# Run the above helper function on all items with 6 and 9 ability levels and
+# add adjusted p-values for multiple testing
 df <- expand_grid(k = c(6L, 9L), item = 1:20) |> 
     mutate(out = pmap(list(item, k), lambda)) |>
     unnest(out) |> 
-    arrange(k, item)
+    arrange(k, item) |> 
+    group_by(k) |> 
+    mutate(across(ends_with("_p"), 
+                  \(x) p.adjust(x, method = "BH"), 
+                  .names = "{.col}_adj")) |> 
+    ungroup()
 
 # Helper function for TeX output in the paper: encloses the first string x
 # in a TeX \emph{...} if the first and second strings differ.
@@ -138,12 +183,35 @@ empher <- function(x, y) {
     } else {
         out <- str_c("\\emph{", x, "}")
     }
+    out
+}
+
+# Helper function for TeX output: add daggers to results where DIF is detected
+# but it would not be detected after the BH adjustment to p-values
+daggerer <- function(x, p_adj, alpha = 0.05) {
+    if (!is.na(p_adj) && !str_detect(x, "none") && p_adj >= alpha) {
+        out <- str_c(x, "\\textsuperscript{\\textdagger}")
+    } else {
+        out <- x
+    }
+    out
+}
+
+# Helper function for TeX output: add asterisks to results where the analysis
+# concludes nonuniform DIF, but the adjusted p-values for the full model
+# suggest that the full model does not fit
+asterisker <- function(x, p, alpha = 0.05) {
+    if (p < alpha) {
+        out <- str_c(x, "\\textsuperscript{*}")
+    } else {
+        out <- x
+    }
+    out
 }
 
 # Tibble for TeX output
-x <- df |> 
-    select(k, item, llm_asy_main, llm_exc_main, lrm_asy_main, lrm_exc_main) |> 
-    mutate(across(contains("_"), 
+df_tex <- df |> 
+    mutate(across(ends_with("_main"), 
                   \(x) case_match(x, 
                                   "none" ~ "none", 
                                   "unif" ~ "uniform", 
@@ -156,14 +224,23 @@ x <- df |>
     mutate(llm_exc = map2_chr(llm_exc_main, llm_asy_main, empher)) |> 
     mutate(lrm_asy = map2_chr(lrm_asy_main, lrm_exc_main, empher)) |> 
     mutate(lrm_exc = map2_chr(lrm_exc_main, lrm_asy_main, empher)) |> 
-    select(-ends_with("_main"))
+    mutate(llm_asy = map2_chr(llm_asy, llm_asy_no23_p_adj, daggerer)) |> 
+    mutate(llm_exc = map2_chr(llm_exc, llm_exc_no23_p_adj, daggerer)) |> 
+    mutate(lrm_asy = map2_chr(lrm_asy, lrm_asy_no23_p_adj, daggerer)) |> 
+    mutate(lrm_exc = map2_chr(lrm_exc, lrm_exc_no23_p_adj, daggerer)) |> 
+    mutate(lrm_asy = map2_chr(lrm_asy, lrm_asy_full_p_adj, asterisker)) |> 
+    mutate(lrm_exc = map2_chr(lrm_exc, lrm_exc_full_p_adj, asterisker)) |> 
+    select(k, item, llm_asy, llm_exc, lrm_asy, lrm_exc)
 
-# Save TeX output to file; copied into the main paper and mildly edited there
+# TeX header for table
 header <- c("& & \\multicolumn{2}{l}{Log-Linear Models} & \\multicolumn{2}{l}{Logistic Regressions} \\\\",
             "\\cmidrule{3-6}",
             "$\\#\\cA$ & Item & Asymptotic & Exact & Asymptotic & Exact \\\\") |> 
     str_flatten(collapse = "\n")
-xtable(x, align = c(rep("c",3), rep("l",4))) |> 
+
+# Save TeX output to file
+df_tex |> 
+    xtable(align = c(rep("c",3), rep("l",4))) |> 
     print(floating = FALSE,
           include.rownames = FALSE, 
           include.colnames = FALSE, 
