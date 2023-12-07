@@ -72,7 +72,7 @@ pchisq(x$deviance, x$df.residual, lower.tail = FALSE)           # p-value
 
 x <- glm(p ~ ability + group + ability:group, 
          binomial, weights = n, data = u)                       # Fit model
-sum(mle(t, no3w, "lrm")$expected >= 5)/length(t)                # Percent large expected counts
+sum(mle(t, full, "lrm")$expected >= 5)/length(t)                # Percent large expected counts
 pchisq(x$deviance, x$df.residual, lower.tail = FALSE)           # p-value
 
 # Exact logistic regression
