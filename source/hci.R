@@ -164,12 +164,17 @@ lambda <- function(x, k) {
               lrm_exc_full_p = lrm_exc_full_p)
 }
 
-# Run the above helper function on all items with 6 and 9 ability levels and
-# add adjusted p-values for multiple testing
+# Run the above helper function on all items with 6 and 9 ability levels
 df <- expand_grid(k = c(6L, 9L), item = 1:20) |> 
     mutate(out = pmap(list(item, k), lambda)) |>
     unnest(out) |> 
-    arrange(k, item) |> 
+    arrange(k, item)
+
+# Add adjusted p-values for multiple testing. Group p-values into groups of 20. 
+# In other words, there is one group for each tuple (binning, strategy, model) 
+# and each group contains a p-value for each item. Use Benjamini-Hochberg 
+# adjustments on each group.
+df <- df |> 
     group_by(k) |> 
     mutate(across(ends_with("_p"), 
                   \(x) p.adjust(x, method = "BH"), 
@@ -255,13 +260,13 @@ header <- c("& & \\multicolumn{2}{l}{Log-Linear Models} & \\multicolumn{2}{l}{Lo
 
 # Save TeX output to file
 df_tex |> 
-    xtable(align = c(rep("c",3), rep("l",4))) |> 
+    xtable(align = c(rep("c", 3), rep("l", 4))) |> 
     print(floating = FALSE,
           include.rownames = FALSE, 
           include.colnames = FALSE, 
           booktabs = TRUE, 
           add.to.row = list(pos = list(0), command = header),
-          hline.after = c(-1,0,20,40),
+          hline.after = c(-1, 0, 20, 40),
           sanitize.text.function = identity,
           comment = FALSE,
           file = "../paper/hci-table.tex")
