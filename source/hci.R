@@ -105,8 +105,8 @@ sample <- metropolis(v, moves,
 mean(computeUProbsCpp(sample) <= pr)                            # p-value
 count_tables(v, config_no3w)                                    # Count tables in fiber
 
-config_no3w <- lawrence(A)                                      # Configuration matrix
-moves <- markov(config_no3w, p = "arb")                         # Markov basis for fiber
+config_full <- lawrence(A)                                      # Configuration matrix
+moves <- markov(config_full, p = "arb")                         # Markov basis for fiber
 sample <- metropolis(v, moves,
                      iter = 10000,
                      burn = 1000,
