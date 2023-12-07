@@ -2,9 +2,11 @@ library(tidyverse)
 library(detectseparation)
 library(algstat)
 
-################################################################################
+# ==============================================================================
 # Miscellaneous
-################################################################################
+# ==============================================================================
+
+FT <- c(FALSE, TRUE)
 
 # Pull an algstat C++ functions into the namespace
 computeUProbsCpp <- function(x) {
@@ -12,16 +14,13 @@ computeUProbsCpp <- function(x) {
 }
 
 # Facet specifications of models
-no23 <- list(c(1,2), c(1,3))
-no3w <- list(c(1,2), c(1,3), c(2,3))
-full <- list(c(1,2,3))
+no23 <- list(c(1, 2), c(1, 3))
+no3w <- list(c(1, 2), c(1, 3), c(2, 3))
+full <- list(c(1, 2, 3))
 
-# Other
-FT <- c(FALSE, TRUE)
-
-################################################################################
+# ==============================================================================
 # Compute Markov moves
-################################################################################
+# ==============================================================================
 
 # Compute configuration matrices for relevant models. The input should be
 # a list of numeric vectors, where the first vector is the list of ability
@@ -39,8 +38,8 @@ configuration_matrices <- function(dimnames) {
         A <- expand_grid(1, ability = dimnames[[1]], group = dimnames[[2]]) |> 
             mutate(interaction = ability * group) |> 
             t()
-        config$lrm_no23 <- algstat::lawrence(A[1:2,])
-        config$lrm_no3w <- algstat::lawrence(A[1:3,])
+        config$lrm_no23 <- algstat::lawrence(A[1:2, ])
+        config$lrm_no3w <- algstat::lawrence(A[1:3, ])
         config$lrm_full <- algstat::lawrence(A)
     } else {
         config$lrm_no23 <- NULL
@@ -73,9 +72,9 @@ markov_moves <- function(dimnames) {
     map(configuration_matrices(dimnames), markov_wrapper)
 }
 
-################################################################################
+# ==============================================================================
 # Generate simulation models
-################################################################################
+# ==============================================================================
 
 # Helper function to compute a joint distribution of ability, group, response
 # using Bock's model, where the conditional probability 
@@ -131,7 +130,7 @@ joint_distribution <- function(base, dif) {
     dimnames(alpha) <- base$dimnames
     
     # Array of conditional probabilities of R given (A, G)
-    r_given_ag <- sweep(alpha, c(1,2), marginSums(alpha, c(1,2)), `/`)
+    r_given_ag <- sweep(alpha, c(1, 2), marginSums(alpha, c(1, 2)), `/`)
     
     # Array of joint distribution of (A, G)
     ag <- sweep(base$ability_dist, 2, base$group_dist, `*`)
@@ -144,7 +143,7 @@ joint_distribution <- function(base, dif) {
 # specified as a three-way array, and returns the conditional distribution of 
 # the third variable given the first two again as a three-way array.
 conditional <- function(dist) {
-    sweep(dist, c(1,2), marginSums(dist, c(1,2)), `/`)
+    sweep(dist, c(1, 2), marginSums(dist, c(1, 2)), `/`)
 }
 
 # Helper function to compute the Rényi alpha-divergence from q to p, where p 
@@ -196,7 +195,7 @@ kl <- function(p, q) {
 dif_size_vector <- function(dist, distance = kl) {
     r_given_ag <- conditional(dist)
     1:(dim(dist)[1]) |> 
-        map_dbl(\(a) kl(r_given_ag[a,2,], r_given_ag[a,1,]))
+        map_dbl(\(a) kl(r_given_ag[a, 2, ], r_given_ag[a, 1, ]))
 }
 
 # Helper function that computes a statistically meaningful "size of DIF" 
@@ -400,9 +399,9 @@ generate_simulation_models <- function(seed,
     out
 }
 
-################################################################################
+# ==============================================================================
 # Generate simulation data
-################################################################################
+# ==============================================================================
 
 # Generate a three-way table of observation counts following the three-way 
 # input distribution, where the number of observations is the given 
@@ -411,8 +410,7 @@ generate_simulation_models <- function(seed,
 simulate_table <- function(dist, 
                            sample_size, 
                            predicate = \(t) TRUE, 
-                           max = 1e3
-                           ) {
+                           max = 1e3) {
     count <- 0
     repeat {
         # Generate table
@@ -435,9 +433,9 @@ simulate_table <- function(dist,
     t
 }
 
-################################################################################
+# ==============================================================================
 # MLE-related functions
-################################################################################
+# ==============================================================================
 
 # Helper function to create a list of toggles for models. Raises error if model 
 # is not one of the facet specifications no23, no3w, full or one of those 
@@ -550,12 +548,9 @@ collapse <- function(t, collapsing) {
         pull(n) |> 
         algstat::vec2tab(c(2,2,2))
     if (!is_null(dimnames(t))) {
-        dimnames(out) <- map2(dimnames(t), 
-                              collapsing, 
-                              \(x, y) map_chr(FT, 
-                                              \(z) str_flatten(keep(x, y == z))
-                                              )
-                              )
+        dimnames(out) <- map2(dimnames(t), collapsing, 
+                              \(x, y) map_chr(FT, \(z) 
+                                              str_flatten(keep(x, y == z))))
     }
     out
 }
@@ -846,9 +841,9 @@ mle <- function(t, model, family, threshold = 0) {
     out
 }
 
-################################################################################
+# ==============================================================================
 # Task function for each table
-################################################################################
+# ==============================================================================
 
 # Strings to indicate DIF test results:
 # * fail = test could not determine if there is DIF

@@ -55,6 +55,7 @@ x <- df |>
 # Visual test
 x
 
+# Save
 ggsave("../figs/heat.svg", x, 
        width = 10, height = 4, units = "in", 
        bg = "white")

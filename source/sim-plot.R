@@ -3,9 +3,9 @@ source("base.R")
 library(colorspace)
 library(xtable)
 
-################################################################################
+# ==============================================================================
 # Read Files
-################################################################################
+# ==============================================================================
 
 seeds_file <- "seeds.csv"
 models_file <- "models.rds"
@@ -16,9 +16,9 @@ seeds <- read_csv(seeds_file, col_types = "ic") |>
 models <- readRDS(models_file)
 results <- read_csv(results_file)
 
-################################################################################
+# ==============================================================================
 # Themes and Colors
-################################################################################
+# ==============================================================================
 
 theme_set(theme_minimal())
 
@@ -30,11 +30,11 @@ short_names <- c("mle",
                  "exc_main", 
                  "exc_swap")
 colors <- c("#BBBBBB", "#BBBBBB", qualitative_hcl(5, palette = "set2"))
-alphas = c(1, 0.5, rep(1, 5))
+alphas <- c(1, 0.5, rep(1, 5))
 
-################################################################################
-# Some Helper Functions
-################################################################################
+# ==============================================================================
+# Helper Functions
+# ==============================================================================
 
 # Takes as input a "true" vector, ie, a vector of the true DIF status of some
 # tables, and a "result" vector which indicates the output of some method
@@ -52,8 +52,7 @@ detect <- function(true, result) {
 # Like above, but now returns a logical vector which indicates whether the 
 # method succeeded at correctly *classifying* DIF. 
 classify <- function(true, result) {
-    map2_lgl(true, 
-             result, 
+    map2_lgl(true, result, 
              \(x, y) if (x == dif_test_results$none) { NA } else { x == y })
 }
 
@@ -106,15 +105,15 @@ filename <- function(s,
     str_c(s, "-", family, method_pair_suffix(methods), ".", format)
 }
 
-################################################################################
+# ==============================================================================
 # Main Plotting Function
-################################################################################
+# ==============================================================================
 
 plot <- function(s, 
                  family, 
                  methods = main_method_pair,
                  filename = NULL) {
-    # Return NULL if requesting LRM plot for non-dichotomous seed
+    # Return empty string if requesting LRM plot for non-dichotomous seed
     if (family == "lrm" && !models[[match(s, seeds)]]$is_dichotomous) {
         return("")
     }
@@ -216,20 +215,21 @@ plot <- function(s,
     }
 }
 
-################################################################################
+# ==============================================================================
 # Some Visual Tests
-################################################################################
+# ==============================================================================
 
 plot(1948, "llm")
 plot(1947, "lrm", method_pairs[[2]])
 plot(1947, "lrm", method_pairs[[3]], filename = "tests/x.svg")
 plot(1948, "llm", method_pairs[[4]])
 
-################################################################################
-# Make and save PDF plots for the paper
-################################################################################
+# ==============================================================================
+# Make Plots for Paper
+# ==============================================================================
 
 paper_folder <- "../paper/"
+
 tibble(seed = c(1947, 1947, 1948, 1930), 
        family = c("llm", "lrm", "llm", "lrm")) |> 
     mutate(filename = map2_chr(seed, family,
@@ -238,11 +238,12 @@ tibble(seed = c(1947, 1947, 1948, 1930),
     mutate(filename = pmap_chr(list(seed, family, filename), 
                                \(x, y, z) plot(x, y, filename = z)))
 
-################################################################################
-# Make and save all plots
-################################################################################
+# ==============================================================================
+# All Plots for README
+# ==============================================================================
 
-fig_folder <- "../figs/" 
+fig_folder <- "../figs/"
+
 grid <- expand_grid(seed = seeds, 
             family = c("llm", "lrm"),
             method_pair = method_pairs) |> 
@@ -251,9 +252,9 @@ grid <- expand_grid(seed = seeds,
     mutate(filename = pmap_chr(list(seed, family, method_pair, filename), 
                                plot))
 
-################################################################################
-# Reorganize for output
-################################################################################
+# ==============================================================================
+# README Table Output Prep
+# ==============================================================================
 
 # Only for testing
 # grid <- readRDS("tests/grid.rds")
@@ -272,9 +273,9 @@ cell_maker <- function(filename, img_width) {
     str_c("<img width=\"", img_width ,"\" src=\"./", x, "\" />")
 }
 
-################################################################################
-# Primary Comparison Plots
-################################################################################
+# ==============================================================================
+# README Table for Primary Comparison Plots
+# ==============================================================================
 
 titles <- c("Seed",
             "Log-Linear Models",
@@ -303,9 +304,9 @@ primary_output <- primary |>
 # Check
 cat(primary_output)
 
-################################################################################
-# Secondary Comparison Plots
-################################################################################
+# ==============================================================================
+# README Table for Secondary Comparison Plots
+# ==============================================================================
 
 titles <- c("Seed",
             "LLM Asy Swap",
@@ -347,16 +348,15 @@ secondary_output <- secondary |>
 # Check
 cat(secondary_output)
 
-################################################################################
-# Make README
-################################################################################
+# ==============================================================================
+# README Output
+# ==============================================================================
+
+readme_output <- "../README.md"
 
 readme_source <- "README.md"
 primary_placeholder <- "<!--PRIMARY-->"
 secondary_placeholder <- "<!--SECONDARY-->"
-
-readme_output <- "../README.md"
-
 note <- "<!-- 
 Do not edit README.md in the root directory of this repository! 
 
@@ -372,4 +372,5 @@ out <- read_file(readme_source) |>
     str_replace(primary_placeholder, primary_output) |> 
     str_replace(secondary_placeholder, secondary_output)
 out <- str_c(note, out)
+
 write_file(out, readme_output)
