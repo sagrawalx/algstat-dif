@@ -115,7 +115,7 @@ Right-click and open image in new tab to zoom.
 
 ### Secondary Comparison Plots
 
-The following plots compare the DIF analysis paradigm that we focus on in the paper against two of the variants discussed there: the variant where the order of goodness-of-fit tests is swapped using both the asymptotic ("Asy") and the exact ("Exc") strategies, and the variant where classification step is augmented with a comparison ("Comp"), using only the asymptotic strategy.
+The following plots compare the DIF analysis paradigm that we focus on in the paper against two of the variants discussed there: the variant where the order of goodness-of-fit tests is swapped using both the asymptotic ("Asy") and the exact ("Exc") strategies, and the variant where classification step is augmented with a comparison ("Comp"), using only the asymptotic strategy. For a demonstration of how to conduct comparison using the exact strategy, see `exc-comp.R`. 
 
 Right-click and open image in new tab to zoom. 
 

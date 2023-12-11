@@ -94,7 +94,11 @@ clusterEvalQ(cl, library(algstat))
 
 # Compute MCMC distribution of G using the parallel cluster
 # This takes a little bit of time (on the order of 4-6 minutes on our machines,
-# with the parameters that appear above). 
+# with the parameters that appear above). It is possible to pass 
+# .inorder = FALSE to foreach for a potential speedup (at the expensive of
+# not having a guarantee that the list of Gs is in the same order as the 
+# columns of sample_no23, but this doesn't matter below), but the speedup
+# is not very noticeable. 
 start_time <- Sys.time()
 G <- foreach(i = 1:ncol(sample_no23), .combine = c) %dopar% {
     sample_no23[, i] |> 

@@ -263,12 +263,16 @@ grid <- expand_grid(seed = seeds,
     mutate(filename = pmap_chr(list(seed, family, method_pair, filename), 
                                plot))
 
+grid_file <- "tests/grid.rds"
+# saveRDS(grid, grid_file)
+
 # ==============================================================================
 # README Table Output Prep
 # ==============================================================================
 
-# Only for testing
-# grid <- readRDS("tests/grid.rds")
+if (file.exists(grid_file)) {
+    grid <- readRDS(grid_file)
+}
 
 # Restructure the grid
 grid <- grid |> 
