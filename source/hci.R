@@ -203,8 +203,9 @@ decorator <- function(x, no23_p_adj, full_p = 1) {
         # so DIF analysis results should be taken with a grain of salt and
         # we mark it with an asterisk
         decorations <- c(decorations, "*")
-    }
-    if (!is.na(no23_p_adj) && !str_detect(x, "none") && no23_p_adj >= alpha) {
+    } else if (!is.na(no23_p_adj) && 
+               !str_detect(x, "none") && 
+               no23_p_adj >= alpha) {
         # If DIF was detected, but the p-value for the no23 model becomes large
         # after BH adjustments, it means that the detected DIF can probably be
         # ignored and we mark it with a dagger
