@@ -12,7 +12,8 @@ The `source` directory contains the following files:
 
 * `base.R` is an assortment of functions related to conducting DIF analysis using classical asymptotics and using algebraic statistics. Functions in this file are invoked by most of the following R script files. 
     - `seeds.csv` contains a list of 16 integer seeds. 
-    - `models.rds` contains data about the models generated from these seeds (via the `generate_simulation_models` function in `base.R`). 
+    - `models.rds` contains data about the models generated from these seeds (via the `generate_simulation_models` function in `base.R`).
+    - `params.R` is a short script to display model parameters as a TeX table.
 * `hci.R` conducts DIF analysis on the HCI dataset as explained in the paper. 
     - `hci-moves6.rds` and `hci-moves9.rds` contain Markov move computations that are used in `hci.R`.
 * `heat.R` generates a heat map of Kullback-Leibler divergences for dichotomous seeds. See below. 
