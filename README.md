@@ -29,7 +29,8 @@ The `source` directory contains the following files:
 * `heat.R` generates a heat map of Kullback-Leibler divergences for dichotomous seeds. See below. 
 * `sim-run.R` runs parallelized simulations under a variety of sample size and DIF configurations. 
     - `results.zip` is a compressed CSV of the results of `sim-run.R`. See below. 
-    - `sim-plot.R` generates many plots (and tables to organize the plots) out of the results of `sim-run.R`. See below.  
+    - `sim-plot.R` generates many plots (and tables to organize the plots) out of the results of `sim-run.R`. See below.
+* `exc-comp.R` is an demonstration of how to perform comparison-of-fit tests using the exact methods of algebraic statistics.
 
 Note that the `rds` files are not necessary in the sense that, if they are missing, the data they contain will be computed on the fly and the files will be created. This will increase running time because these files contain results of Markov move computations. 
 
