@@ -180,7 +180,7 @@ unvectorize <- function(v, dimnames, family) {
     }
     
     # Make table
-    t <- algstat::vec2tab(grid$n, map_dbl(dimnames, length)) |> 
+    t <- vec2tab(grid$n, map_dbl(dimnames, length)) |> 
         as.table()
     dimnames(t) <- dimnames
     
@@ -251,7 +251,7 @@ configuration_matrix <- function(dimnames, model, family = NULL) {
     if (toggle$llm) {
         # Log-linear models
         # Use hmat to make configuration matrices
-        out <- algstat::hmat(d, facets_from_toggler(toggle))
+        out <- hmat(d, facets_from_toggler(toggle))
         
         # Make row names
         rownames <- dimnames(out)[[1]] |> 
@@ -271,11 +271,11 @@ configuration_matrix <- function(dimnames, model, family = NULL) {
         
         # Use lawrence to make configuration matrices
         if (toggle$no23) {
-            out <- algstat::lawrence(aux[1:2, ])
+            out <- lawrence(aux[1:2, ])
         } else if (toggle$no3w) {
-            out <- algstat::lawrence(aux[1:3, ])
+            out <- lawrence(aux[1:3, ])
         } else {
-            out <- algstat::lawrence(aux)
+            out <- lawrence(aux)
         }
         
         # Make row names
@@ -341,7 +341,7 @@ markov_moves <- function(dimnames) {
         if (is_null(A)) {
             return(NULL)
         }
-        latte::markov(A, p = "arb")
+        markov(A, p = "arb")
     }
     
     # Note that, for saturated models (like llm_full, and also lrm_full in
@@ -367,7 +367,7 @@ markov_moves <- function(dimnames) {
 
 # Count tables in the fiber of the given table. Requires LattE.
 fiber_size <- function(t, model, family = NULL) {
-    algstat::count_tables(t, configuration_matrix(dimnames(t), model, family))
+    count_tables(t, configuration_matrix(dimnames(t), model, family))
 }
 
 # ==============================================================================
@@ -398,7 +398,7 @@ unreorganize <- function(u) {
                      group = unique(u$group), 
                      response = 0:1)
     t <- rbind((1 - u$p) * u$n, u$p * u$n) |> 
-        algstat::vec2tab(map_dbl(dimnames, length)) |> 
+        vec2tab(map_dbl(dimnames, length)) |> 
         as.table()
     dimnames(t) <- dimnames
     t
@@ -489,7 +489,7 @@ collapse <- function(t, collapsing) {
     out <- expand_grid(a = FT, b = FT, c = FT) |> 
         mutate(n = pmap_dbl(list(a, b, c), lambda)) |> 
         pull(n) |> 
-        algstat::vec2tab(c(2, 2, 2))
+        vec2tab(c(2, 2, 2))
     
     # Attach readable names for checking
     if (!is_null(dimnames(t))) {
@@ -869,7 +869,7 @@ joint_distribution <- function(base, dif) {
         mutate(alpha = map2(ability, group, lambda)) |> 
         unnest(alpha) |> 
         pull(alpha) |> 
-        algstat::vec2tab(d)
+        vec2tab(d)
     dimnames(alpha) <- base$dimnames
     
     # Array of conditional probabilities of R given (A, G)
@@ -1172,9 +1172,9 @@ simulate_table <- function(dist,
     count <- 0
     repeat {
         # Generate table
-        t <- rmultinom(1, sample_size, algstat::tab2vec(dist)) |> 
+        t <- rmultinom(1, sample_size, tab2vec(dist)) |> 
             as.vector() |> 
-            algstat::vec2tab(dim(dist)) |> 
+            vec2tab(dim(dist)) |> 
             as.table()
         dimnames(t) <- dimnames(dist)
         
@@ -1285,13 +1285,13 @@ table_task <- function(t,
     # Exact LLM
     v <- vectorize(t, "llm")
     pr <- computeUProbsCpp(matrix(v))
-    sample <- algstat::metropolis(v, moves$llm_no23, 
+    sample <- metropolis(v, moves$llm_no23, 
                                   iter = iter, 
                                   burn = burn, 
                                   thin = thin)$steps |> 
         suppressMessages()
     llm_exc_no23_p <- mean(computeUProbsCpp(sample) <= pr)
-    sample <- algstat::metropolis(v, moves$llm_no3w, 
+    sample <- metropolis(v, moves$llm_no3w, 
                                   iter = iter, 
                                   burn = burn, 
                                   thin = thin)$steps |> 
@@ -1357,13 +1357,13 @@ table_task <- function(t,
         # Exact LRM
         v <- vectorize(t, "lrm")
         pr <- computeUProbsCpp(matrix(v))
-        sample <- algstat::metropolis(v, moves$lrm_no23, 
+        sample <- metropolis(v, moves$lrm_no23, 
                                       iter = iter, 
                                       burn = burn, 
                                       thin = thin)$steps |> 
             suppressMessages()
         lrm_exc_no23_p <- mean(computeUProbsCpp(sample) <= pr)
-        sample <- algstat::metropolis(v, moves$lrm_no3w, 
+        sample <- metropolis(v, moves$lrm_no3w, 
                                       iter = iter, 
                                       burn = burn, 
                                       thin = thin)$steps |> 

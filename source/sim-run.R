@@ -1,3 +1,5 @@
+# Run the simulations!
+
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 source("base.R")
 library(doParallel)
@@ -33,13 +35,13 @@ models <- map(seeds,
 # Sanity Checks
 # ==============================================================================
 
-# Is there variety of model dimensionalities? 
+# Is there variety of model dimensionalities?
 models |> 
     map_chr(\(m) str_flatten(map_dbl(m$dimnames, length), collapse = "x")) |> 
     str_flatten(collapse = " ")
-# Is there variety (but no extremes) of probability of group 0? 
+# Is there variety (but no extremes) of probability of group 0?
 models |> 
-    map_dbl(\(m) m$group_dist[1]) 
+    map_dbl(\(m) m$group_dist[1])
 # Is there variety of distributions of ability conditioned on group?
 models |> 
     map(\(m) m$ability_dist)
@@ -85,37 +87,37 @@ if (file.exists(results_file)) {
 }
 
 # Set up batches of simulations
-batches <- models |>
+batches <- models |> 
     map(\(m) m$config) |> 
     bind_rows() |> 
     expand_grid(sample_size = sample_sizes) |> 
     mutate(num_sims = goal_num_sims) |> 
     rows_update(counts, by = c("seed", "type", "norm", "sample_size")) |> 
     filter(num_sims > 0) |> 
-    mutate(id = seq_along(seed)) |>
+    mutate(id = seq_along(seed)) |> 
     relocate(id)
 
-# Run one batch of simulations. The configurations of the batch are specified 
-# by c, which is one row of the batches tibble as it is set up above. 
-# If prefix is a not NULL, the results are written to a temporary csv file 
-# whose name is prefix followed by the batch id followed by ".csv". 
-# It also returns the results as a tibble. 
+# Run one batch of simulations. The configurations of the batch are specified
+# by c, which is one row of the batches tibble as it is set up above.
+# If prefix is a not NULL, the results are written to a temporary csv file
+# whose name is prefix followed by the batch id followed by ".csv".
+# It also returns the results as a tibble.
 run_batch <- function(c, prefix = NULL) {
     moves <- models[[match(c$seed, seeds)]]$moves
     
     lambda <- function(x) {
         t <- simulate_table(c$dist[[1]], c$sample_size)
         bind_cols(seed = c$seed, 
-                  type = c$type,
-                  norm = c$norm,
-                  sample_size = c$sample_size,
+                  type = c$type, 
+                  norm = c$norm, 
+                  sample_size = c$sample_size, 
                   table_task(t, moves))
     }
     
     results <- map(1:(c$num_sims), lambda) |> 
         bind_rows()
     if (!is_null(prefix)) {
-        filename <- paste(prefix, c$id, ".csv", sep="")
+        filename <- paste(prefix, c$id, ".csv", sep = "")
         write_csv(results, filename)
     }
     results
@@ -129,9 +131,10 @@ num_cores <- detectCores() - 2
 cl <- makeCluster(num_cores)
 registerDoParallel(cl = cl)
 clusterEvalQ(cl, library(tidyverse))
+clusterEvalQ(cl, library(algstat))
 
 start_timer <- Sys.time()
-foreach(i = 1:nrow(batches), 
+foreach(i = seq_len(nrow(batches)), 
         .combine = \(x) NULL, 
         .inorder = FALSE) %dopar% {
     run_batch(slice(batches, i), batch_prefix)
