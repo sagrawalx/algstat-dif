@@ -1,3 +1,5 @@
+# This script file generates the Kullback-Leibler heat map.
+
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 source("base.R")
 library(latex2exp)  # For LaTeX in ggplot
@@ -11,8 +13,8 @@ colors <- c("lightgray", "#ED90A4")
 models <- readRDS("models.rds") |> 
     keep(\(m) m$is_dichotomous)
 
-# Helper function that takes a model m and (x, y) in R^2, maps (x, y) into 
-# (C^perp)^2 and then computes the joint distribution that would result by 
+# Helper function that takes a model m and (x, y) in R^2, maps (x, y) into
+# (C^perp)^2 and then computes the joint distribution that would result by
 # taking that vector in (C^perp)^2 as a DIF vector
 lambda <- function(m, x, y) {
     dif <- c(to_constants_perp(x), to_constants_perp(y))
@@ -20,7 +22,7 @@ lambda <- function(m, x, y) {
 }
 
 # Tibble to record data about models
-model_df <- tibble(model = models) |>
+model_df <- tibble(model = models) |> 
     mutate(seed = map_dbl(model, \(m) m$seed)) |> 
     mutate(I = map_dbl(model, \(m) length(m$dimnames$ability))) |> 
     mutate(x = map_dbl(model, \(m) m$uv[2]), 
@@ -34,7 +36,7 @@ model_df <- tibble(model = models) |>
 mesh <- seq(-2.5, 2.5, by = 0.25)
 
 # Compute grid of Kullback-Leibler divergences
-df <- expand_grid(model_df, u_prime = mesh, v_prime = mesh) |>
+df <- expand_grid(model_df, u_prime = mesh, v_prime = mesh) |> 
     mutate(dist = pmap(list(model, u_prime, v_prime), lambda)) |> 
     mutate(KL = map_dbl(dist, dif_size))
 
@@ -43,11 +45,11 @@ x <- df |>
     ggplot(aes(u_prime, v_prime, fill = KL)) + 
     facet_wrap(~ seed, nrow = 2) + 
     geom_tile() + 
-    geom_vector(aes(x = 0.5*x, y = 0.5*y), color = "gray") + 
+    geom_vector(aes(x = 0.5 * x, y = 0.5 * y), color = "gray") + 
     geom_vector(aes(x = unif_x, y = unif_y)) + 
     geom_vector(aes(x = nonunif_x, y = nonunif_y)) + 
-    ylab(TeX("$v_\\Delta$")) +
-    xlab(TeX("$u_\\Delta$")) +
+    ylab(TeX("$v_\\Delta$")) + 
+    xlab(TeX("$u_\\Delta$")) + 
     scale_fill_gradient(low = colors[1], high = colors[2]) + 
     theme_minimal() + 
     theme(line = element_blank())
