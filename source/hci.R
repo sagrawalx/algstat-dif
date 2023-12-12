@@ -25,6 +25,12 @@ discretize <- function(x, k) {
 # Focus Item
 # ==============================================================================
 
+# This code is intended to match the snippets that appear in our paper closely, 
+# but not exactly. It is usually not the quicket code or the code that takes
+# the most advantage of other functions that we've defined in this repository,
+# but the point is for readers of the paper to be able to follow along with the
+# code snippets in the paper using this section, if they'd like. 
+
 # Choose focus item: Item 1, Item 2, ..., Item 20
 focus_item <- 17
 
@@ -163,9 +169,20 @@ lambda <- function(x, k) {
               lrm_exc_full_p = lrm_exc_full_p)
 }
 
+# Set a seed for complete reproducibility. This is not necessary; feel free to 
+# comment out this line if you'd like! The final results are mostly stable, 
+# except for one very small point: namely, whether the exact method using 
+# logistic regressions for item 4 with 6 ability levels has a star or a dagger.
+# This is because the BH-adjusted exact p-value for the fit of the full model 
+# is roughly 0.05, and varies slightly from run to run if a seed is not set 
+# (because the Markov chains vary). If it ends up being above 0.05, that test 
+# result gets a dagger; if its below, it gets a star instead. Usually, it
+# lands just above 0.05 and gets a dagger. 
+set.seed(2023)
+
 # Run the above helper function on all items with 6 and 9 ability levels. 
 # Note that there are a lot of Markov chains to generate, so this computation
-# will take a little bit of time.
+# will take a little bit of time (even after Markov moves have been computed).
 df <- expand_grid(k = c(6L, 9L), item = 1:20) |> 
     mutate(out = pmap(list(item, k), lambda)) |> 
     unnest(out) |> 
@@ -181,6 +198,15 @@ df <- df |>
                   \(x) p.adjust(x, method = "BH"), 
                   .names = "{.col}_adj")) |> 
     ungroup()
+
+# If you read the long comment above the set.seed command above, and you ended
+# up commenting that line out, you might be interested in seeing what p-value
+# you actually got! You'll probably find that it's just a little above 0.05,
+# though it may sometimes fall a little bit below as well. If you didn't 
+# comment out the set.seed line, it'll fall a little above. 
+df |> 
+    filter(k == 6 & item == 4) |> 
+    select(lrm_exc_full_p_adj)
 
 # Helper function for TeX output: Removes k labels after the first item
 ability_label_remover <- function(k, item) {
