@@ -293,5 +293,5 @@ df_tex |>
           hline.after = c(-1, 0, 20, 40), 
           sanitize.text.function = identity, 
           comment = FALSE, 
-          file = "../paper/hci-table.tex")
+          file = "../paper/table-hci.tex")
 

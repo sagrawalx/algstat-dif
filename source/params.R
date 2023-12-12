@@ -83,4 +83,4 @@ df_tex |>
           hline.after = c(-1, seq(0, nrow(df_tex), by = nrow(df_tex) / length(s))), 
           sanitize.text.function = identity, 
           comment = FALSE,
-          file = "../paper/params.tex")
+          file = "../paper/table-params.tex")
