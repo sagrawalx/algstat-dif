@@ -169,17 +169,6 @@ lambda <- function(x, k) {
               lrm_exc_full_p = lrm_exc_full_p)
 }
 
-# Set a seed for complete reproducibility. This is not necessary; feel free to 
-# comment out this line if you'd like! The final results are mostly stable, 
-# except for one very small point: namely, whether the exact method using 
-# logistic regressions for item 4 with 6 ability levels has a star or a dagger.
-# This is because the BH-adjusted exact p-value for the fit of the full model 
-# is roughly 0.05, and varies slightly from run to run if a seed is not set 
-# (because the Markov chains vary). If it ends up being above 0.05, that test 
-# result gets a dagger; if its below, it gets a star instead. Usually, it
-# lands just above 0.05 and gets a dagger. 
-set.seed(2023)
-
 # Run the above helper function on all items with 6 and 9 ability levels. 
 # Note that there are a lot of Markov chains to generate, so this computation
 # will take a little bit of time (even after Markov moves have been computed).
@@ -199,15 +188,6 @@ df <- df |>
                   .names = "{.col}_adj")) |> 
     ungroup()
 
-# If you read the long comment above the set.seed command above, and you ended
-# up commenting that line out, you might be interested in seeing what p-value
-# you actually got! You'll probably find that it's just a little above 0.05,
-# though it may sometimes fall a little bit below as well. If you didn't 
-# comment out the set.seed line, it'll fall a little above. 
-df |> 
-    filter(k == 6 & item == 4) |> 
-    select(lrm_exc_full_p_adj)
-
 # Helper function for TeX output: Removes k labels after the first item
 ability_label_remover <- function(k, item) {
     ifelse(item == 1, as.character(k), "")
@@ -224,18 +204,18 @@ empher <- function(x, y) {
 decorator <- function(x, no23_p_adj, full_p = 1) {
     # Make a list of decorations to add
     decorations <- character()
-    if (full_p < alpha) {
-        # If full_p is small, it means that the full model does not fit well, 
-        # so DIF analysis results should be taken with a grain of salt and
-        # we mark it with an asterisk
-        decorations <- c(decorations, "*")
-    } else if (!is.na(no23_p_adj) && 
+    if (!is.na(no23_p_adj) && 
                !str_detect(x, "none") && 
                no23_p_adj >= alpha) {
         # If DIF was detected, but the p-value for the no23 model becomes large
         # after BH adjustments, it means that the detected DIF can probably be
         # ignored and we mark it with a dagger
         decorations <- c(decorations, "\\textdagger")
+    } else if (full_p < alpha) {
+        # If full_p is small, it means that the full model does not fit well, 
+        # so DIF analysis results should be taken with a grain of salt and
+        # we mark it with an asterisk
+        decorations <- c(decorations, "*")
     }
     
     # Add decorations and return
@@ -294,4 +274,3 @@ df_tex |>
           sanitize.text.function = identity, 
           comment = FALSE, 
           file = "../paper/table-hci.tex")
-
