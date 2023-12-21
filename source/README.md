@@ -4,7 +4,7 @@ This repository contains supplementary materials for the paper:
 
 Shishir Agrawal, Luis David Garcia Puente, Minho Kim, and Flavia Sancier-Barbosa: *Using Exact Tests from Algebraic Statistics in Sparse Multi-way Analyses: An Application to Analyzing Differential Item Functioning*. 
 
-[arXiv:2312.12638](https://arxiv.org/abs/2312.12638).
+[arXiv:2312.12638](https://arxiv.org/abs/2312.12638)
 
 ## Source
 
