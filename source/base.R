@@ -1001,13 +1001,13 @@ to_constants_perp <- function(v) {
 # The output is a named list containing all of the "movable parts" above.
 # If models_file is not NULL, it attempts to read from models_file before
 # doing the computation, and it writes to that file afterwards to save results.
-generate_simulation_models <- function(seed, 
+generate_simulation_models <- function(seed,
+                                       models_file = NULL, 
                                        beta = 10, 
                                        max_dim = 7, 
                                        dichotomous_prob = 0.5, 
                                        norms = c(1, 2), 
-                                       include_moves = TRUE, 
-                                       models_file = NULL) {
+                                       include_moves = TRUE) {
     # Enforce max_dim is integer at least 2
     max_dim <- as.integer(max_dim)
     if (max_dim < 2) {

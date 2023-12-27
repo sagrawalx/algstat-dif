@@ -6,6 +6,9 @@ source("base.R")
 library(xtable)
 library(ShinyItemAnalysis)
 
+# Pull an algstat C++ functions into the namespace
+computeUProbsCpp <- \(x) .Call("_algstat_computeUProbsCpp", PACKAGE = "algstat", x)
+
 # ==============================================================================
 # Initialize
 # ==============================================================================

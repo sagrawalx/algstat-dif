@@ -5,6 +5,8 @@ source("base.R")
 library(colorspace)
 library(xtable)
 
+theme_set(theme_minimal())
+
 # ==============================================================================
 # Read Files
 # ==============================================================================
@@ -17,21 +19,6 @@ seeds <- read_csv(seeds_file, col_types = "ic") |>
     pull(seed)
 models <- readRDS(models_file)
 results <- read_csv(results_file)
-
-# ==============================================================================
-# Themes and Colors
-# ==============================================================================
-
-theme_set(theme_minimal())
-short_names <- c("mle", 
-                 "heuristic", 
-                 "asy_main", 
-                 "asy_swap", 
-                 "asy_comp", 
-                 "exc_main", 
-                 "exc_swap")
-colors <- c("#BBBBBB", "#BBBBBB", qualitative_hcl(5, palette = "set2"))
-alphas <- c(1, 0.5, rep(1, 5))
 
 # ==============================================================================
 # Helper Functions
@@ -68,32 +55,35 @@ classify <- function(true, result) {
 # For labeling plots
 step_labels <- c(detect = "Detect", 
                  classify = "Classify")
+
 type_labels <- c(none = "No DIF", 
                  unif = "Uniform DIF", 
                  nonunif = "Nonuniform DIF")
+
 norm_labels <- c("0" = "Norm 0", 
                  "1" = "Norm 1", 
                  "2" = "Norm 2")
+
 thing_labels <- c(mle = "MLE Exists", 
                   heuristic = "Heuristic Passes", 
                   asy_main = "Asymptotic Succeeds", 
-                  exc_main = "Exact Succeeds", 
                   asy_swap = "Swapped Asymptotic Succeeds", 
-                  exc_swap = "Swapped Exact Succeeds", 
-                  asy_comp = "Asymptotic with Comparison Succeeds")
+                  asy_comp = "Asymptotic with Comparison Succeeds",
+                  exc_main = "Exact Succeeds", 
+                  exc_swap = "Swapped Exact Succeeds")
+
 family_labels <- c(llm = "Log-Linear Models", 
                    lrm = "Logistic Regressions")
 
-names(colors) <- map_chr(short_names, \(x) thing_labels[[x]])
-names(alphas) <- map_chr(short_names, \(x) thing_labels[[x]])
-
-# For naming plots
-main_method_pair <- c("asy_main", "exc_main")
-method_pairs <- list(main_method_pair, 
+# Pairs of DIF analysis methods to compare in plots
+method_pairs <- list(c("asy_main", "exc_main"), 
                      c("asy_main", "asy_swap"), 
                      c("exc_main", "exc_swap"), 
                      c("asy_main", "asy_comp"))
 
+main_method_pair <- method_pairs[[1]]
+
+# For naming plots
 method_pair_suffix <- function(x) {
     if (setequal(x, method_pairs[[1]])) {
         out <- ""
@@ -115,16 +105,34 @@ filename <- function(s,
 }
 
 # ==============================================================================
-# Main Plotting Function
+# Line Styling
 # ==============================================================================
 
-plot <- function(s, 
-                 family, 
-                 methods = main_method_pair, 
-                 filename = NULL) {
-    # Return empty string if requesting LRM plot for non-dichotomous seed
+# For arXiv and GitHub
+colors <- c("#BBBBBB", "#BBBBBB", qualitative_hcl(5, palette = "set2")) |> 
+    set_names(thing_labels)
+alphas <- c(1, 0.5, rep(1, 5)) |>
+    set_names(thing_labels)
+
+# For journal: variant 1
+linetypes_var <- c("dashed", "dashed", "solid", NA, NA, "solid", NA) |> 
+    set_names(thing_labels)
+alphas_var <- c(0.5, 0.2, 0.5, NA, NA, 1, NA) |> 
+    set_names(thing_labels)
+
+# For journal: variant 2
+colors_var <- c("#BBBBBB", "#BBBBBB", "#0d0887", NA, NA, "#cc4778", NA) |> 
+    set_names(thing_labels)
+
+# ==============================================================================
+# Main Plotting Functions
+# ==============================================================================
+
+# Build a relevant data frame for plotting
+plot_df <- function(s, family, methods = main_method_pair) {
+    # Return NULL if requesting LRM plot for non-dichotomous seed
     if (family == "lrm" && !models[[match(s, seeds)]]$is_dichotomous) {
-        return("")
+        return(NULL)
     }
     
     # Relevant column names
@@ -149,7 +157,7 @@ plot <- function(s,
             rename_with(\(x) str_c("detect_", m), last_col()) |> 
             mutate(classify(df$type, df[[m]])) |> 
             rename_with(\(x) str_c("classify_", m), last_col())
-            
+        
     }
     
     # Aggregate
@@ -194,6 +202,20 @@ plot <- function(s,
                              labels = unname(step_labels), 
                              ordered = TRUE))
     
+    # Return
+    df
+}
+                    
+# Main plotting function (for arXiv and GitHub, uses color)
+plot <- function(s, family, methods = main_method_pair, filename = NULL) {
+    # Build data frame
+    df <- plot_df(s, family, methods)
+    
+    # Return empty string if requesting LRM plot for non-dichotomous seed
+    if (is_null(df)) {
+        return("")
+    }
+    
     # Make plot
     out <- df |> 
         ggplot(aes(x = sample_size, 
@@ -202,13 +224,97 @@ plot <- function(s,
                    alpha = thing)) + 
         facet_grid(step ~ type + norm, 
                    labeller = labeller(Helper = \(x) rep("", length(x)))) + 
-        geom_line() + 
         geom_hline(yintercept = 0.95, 
                    linetype = "dotted", 
                    color = "lightgray") + 
+        geom_line() + 
         expand_limits(y = c(0, 1)) + 
         scale_x_continuous(breaks = c(0, 1000, 2000)) + 
         scale_colour_manual(values = colors, name = "") + 
+        scale_alpha_manual(values = alphas, name = "") + 
+        theme(legend.position = "bottom") + 
+        xlab("Sample Size") + 
+        ylab("Proportion") + 
+        ggtitle(str_c(family_labels[[family]], ", Seed ", s))
+    
+    # Return or save
+    if (is_null(filename)) {
+        return(out)
+    } else {
+        ggsave(filename, out, 
+               width = 10, height = 6, units = "in", 
+               bg = "white")
+        return(filename)
+    }
+}
+
+# Variant plotting function for grayscale plots
+plot_var1 <- function(s, family, filename = NULL) {
+    # Build data frame
+    df <- plot_df(s, family)
+    
+    # Return empty string if requesting LRM plot for non-dichotomous seed
+    if (is_null(df)) {
+        return("")
+    }
+    
+    # Make plot
+    out <- df |> 
+        ggplot(aes(x = sample_size, 
+                   y = proportion,
+                   linetype = thing,
+                   alpha = thing)) + 
+        facet_grid(step ~ type + norm, 
+                   labeller = labeller(Helper = \(x) rep("", length(x)))) + 
+        geom_hline(yintercept = 0.95, 
+                   linetype = "dotted", 
+                   color = "lightgray") + 
+        geom_line() + 
+        expand_limits(y = c(0, 1)) + 
+        scale_x_continuous(breaks = c(0, 1000, 2000)) + 
+        scale_linetype_manual(values = linetypes_var, name = "") + 
+        scale_alpha_manual(values = alphas_var, name = "") + 
+        theme(legend.position = "bottom", panel.grid.minor = element_blank()) + 
+        xlab("Sample Size") + 
+        ylab("Proportion") + 
+        ggtitle(str_c(family_labels[[family]], ", Seed ", s))
+    
+    # Return or save
+    if (is_null(filename)) {
+        return(out)
+    } else {
+        ggsave(filename, out, 
+               width = 10, height = 6, units = "in", 
+               bg = "white")
+        return(filename)
+    }
+}
+
+# Variant plotting function for color plots that are readable in grayscale
+plot_var2 <- function(s, family, filename = NULL) {
+    # Build data frame
+    df <- plot_df(s, family)
+    
+    # Return empty string if requesting LRM plot for non-dichotomous seed
+    if (is_null(df)) {
+        return("")
+    }
+    
+    # Make plot
+    out <- df |> 
+        ggplot(aes(x = sample_size, 
+                   y = proportion, 
+                   color = thing, 
+                   alpha = thing)) + 
+        facet_grid(step ~ type + norm, 
+                   labeller = labeller(Helper = \(x) rep("", length(x)))) + 
+        geom_hline(yintercept = 0.95, 
+                   linetype = "dotted", 
+                   color = "lightgray") + 
+        geom_line() + 
+        expand_limits(y = c(0, 1)) + 
+        scale_x_continuous(breaks = c(0, 1000, 2000)) + 
+        scale_colour_manual(values = colors_var, name = "") + 
         scale_alpha_manual(values = alphas, name = "") + 
         theme(legend.position = "bottom") + 
         xlab("Sample Size") + 
@@ -232,14 +338,20 @@ plot <- function(s,
 
 plot(1948, "llm")
 plot(1947, "lrm", method_pairs[[2]])
-plot(1947, "lrm", method_pairs[[3]], filename = "tests/x.svg")
+plot(1947, "lrm", method_pairs[[3]])
 plot(1948, "llm", method_pairs[[4]])
 
+plot_var1(1947, "llm")
+plot_var1(1948, "llm")
+
+plot_var2(1947, "llm")
+plot_var2(1948, "llm")
+
 # ==============================================================================
-# Make Plots for Paper
+# Make Plots for Paper (arXiv)
 # ==============================================================================
 
-paper_folder <- "../paper/"
+paper_folder <- "../paper/arXiv/"
 
 tibble(seed = c(1947, 1947, 1948, 1930), 
        family = c("llm", "lrm", "llm", "lrm")) |> 
@@ -250,20 +362,34 @@ tibble(seed = c(1947, 1947, 1948, 1930),
                                \(x, y, z) plot(x, y, filename = z)))
 
 # ==============================================================================
-# All Plots for README
+# Make Plots for Paper (Journal)
+# ==============================================================================
+
+paper_folder <- "../paper/journal/"
+
+tibble(seed = c(1947, 1947, 1948, 1930), 
+       family = c("llm", "lrm", "llm", "lrm")) |> 
+  mutate(filename = map2_chr(seed, family, 
+                             \(x, y) filename(x, y, format = "pdf"))) |> 
+  mutate(filename = str_c(paper_folder, filename)) |> 
+  mutate(filename = pmap_chr(list(seed, family, filename), 
+                             \(x, y, z) plot_var2(x, y, filename = z)))
+
+# ==============================================================================
+# All Plots for GitHub
 # ==============================================================================
 
 fig_folder <- "../figs/"
-
-grid <- expand_grid(seed = seeds, 
-                    family = c("llm", "lrm"), 
-                    method_pair = method_pairs) |> 
-    mutate(filename = pmap_chr(list(seed, family, method_pair), filename)) |> 
-    mutate(filename = str_c(fig_folder, filename)) |> 
-    mutate(filename = pmap_chr(list(seed, family, method_pair, filename), 
-                               plot))
-
 grid_file <- "tests/grid.rds"
+
+# Uncomment (Ctrl+Shift+C) to regenerate; this takes a few minutes!
+# grid <- expand_grid(seed = seeds,
+#                     family = c("llm", "lrm"),
+#                     method_pair = method_pairs) |>
+#     mutate(filename = pmap_chr(list(seed, family, method_pair), filename)) |>
+#     mutate(filename = str_c(fig_folder, filename)) |>
+#     mutate(filename = pmap_chr(list(seed, family, method_pair, filename),
+#                                plot))
 # saveRDS(grid, grid_file)
 
 # ==============================================================================

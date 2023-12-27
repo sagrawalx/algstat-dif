@@ -23,7 +23,7 @@ computeG2sCpp <- function(x, exp) {
 
 # Choose a model
 models_file <- "models.rds"
-model <- generate_simulation_models(2015, models_file = models_file)
+model <- generate_simulation_models(2015, models_file)
 
 # Choose a distribution
 # Note: Index 1 is no DIF (so should usually result in a high p-value for the 

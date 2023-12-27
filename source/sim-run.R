@@ -26,10 +26,9 @@ seeds <- read_csv(seeds_file, col_types = "ic") |>
     pull(seed)
 
 # Compute models for any seeds not found in saved models file
-# Tries to read from "models.csv" in the current directory, if possible, 
+# Tries to read from "models.rds" in the current directory, if possible, 
 # and writes to that file if there are models haven't yet been generated.
-models <- map(seeds, 
-              \(s) generate_simulation_models(s, models_file = models_file))
+models <- map(seeds, \(s) generate_simulation_models(s, models_file))
 
 # ==============================================================================
 # Sanity Checks
