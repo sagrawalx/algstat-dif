@@ -16,10 +16,11 @@ This repository contains supplementary materials for the paper:
 Shishir Agrawal, Luis David Garcia Puente, Minho Kim, and Flavia Sancier-Barbosa. *Using Exact Tests from Algebraic Statistics in Sparse Multi-way Analyses: An Application to Analyzing Differential Item Functioning*. 
 
 [arXiv:2312.12638](https://arxiv.org/abs/2312.12638)
+[doi:10.1080/00031305.2024.2388526](https://doi.org/10.1080/00031305.2024.2388526)
 
 ## Source
 
-The `source` directory contains the following files:   
+The `source` directory contains the following files:
 
 * `base.R` is an assortment of functions related to conducting DIF analysis using classical asymptotics and using algebraic statistics. Functions in this file are invoked by most of the following R script files. 
     - `seeds.csv` contains a list of 16 integer seeds. 
